@@ -1,0 +1,80 @@
+{
+  "name": "@kfb/tree-table",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TreeTable组件",
+  "license": "MIT",
+  "author": "williammyuan",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/williammyuan/tree-table.git"
+  },
+  "homepage": "https://github.com/williammyuan/tree-table",
+  "bugs": {
+    "url": "https://github.com/williammyuan/tree-table/issues"
+  },
+  "keywords": [
+    "react",
+    "tree",
+    "table",
+    "tree-table",
+    "drag-and-drop",
+    "virtual-scroll",
+    "component"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter playground dev",
+    "build": "pnpm --filter @kfb/tree-table build",
+    "build:watch": "pnpm --filter @kfb/tree-table build:watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint packages",
+    "storybook": "STORYBOOK_DISABLE_TELEMETRY=1 storybook dev -p 6006 --no-open --quiet",
+    "build-storybook": "STORYBOOK_DISABLE_TELEMETRY=1 storybook build",
+    "prepare": "husky install",
+    "release": "pnpm build && changeset publish",
+    "version": "changeset version"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@storybook/addon-docs": "^8.4.7",
+    "@storybook/addon-essentials": "^8.4.7",
+    "@storybook/addon-interactions": "^8.4.7",
+    "@storybook/addon-links": "^8.4.7",
+    "@storybook/blocks": "^8.4.7",
+    "@storybook/react": "^8.4.7",
+    "@storybook/react-vite": "^8.4.7",
+    "@storybook/test": "^8.4.7",
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^14.2.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@eslint/js": "^9.16.0",
+    "typescript-eslint": "^8.17.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "@vitest/coverage-v8": "^1.3.0",
+    "eslint": "^9.16.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-storybook": "^0.11.1",
+    "globals": "^15.13.0",
+    "husky": "^9.0.10",
+    "jsdom": "^24.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "^8.4.7",
+    "tsdown": "^0.12.1",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vitest": "^1.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

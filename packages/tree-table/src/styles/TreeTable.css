@@ -1,0 +1,515 @@
+/* ==================== 树形表格容器 ==================== */
+.tree-table-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0;
+  background: #fff;
+  border-radius: 8px;
+}
+
+/* 表格主体 */
+.tree-table {
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* 滚动容器 - 让表头和表体在同一个滚动区域内（普通模式） */
+.tree-table-scroll-wrapper {
+  overflow-x: auto;
+}
+
+/* 内容区域 - 确保表头和表体宽度一致 */
+.tree-table-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+}
+
+/* ==================== 滚动模式 ==================== */
+.tree-table-scrollable {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 表头容器 - 固定在顶部，支持横向滚动但隐藏滚动条 */
+.tree-table-header-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 0;
+  /* 隐藏滚动条但保留滚动功能 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  position: relative; /* 为 sticky 提供定位上下文 */
+}
+
+.tree-table-header-wrapper::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
+}
+
+/* 表体容器 - 可纵向和横向滚动 */
+.tree-table-body-wrapper {
+  overflow: auto;
+  flex: 1;
+  position: relative; /* 为 sticky 提供定位上下文 */
+}
+
+/* 滚动模式下的表头 */
+.tree-table-scrollable .tree-table-head {
+  display: flex;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+  font-weight: 500;
+  color: #666;
+  flex-shrink: 0;
+}
+
+/* 滚动模式下的表体 */
+.tree-table-scrollable .tree-table-body {
+  background: #fff;
+}
+
+/* ==================== 表头 ==================== */
+.tree-table-head {
+  display: flex;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+  font-weight: 500;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.tree-table-head .cell {
+  padding: 12px;
+  font-size: 14px;
+}
+
+/* 确保表头和表体的单元格对齐 */
+.tree-table-head .cell,
+.tree-table-row .cell {
+  box-sizing: border-box;
+}
+
+/* ==================== 单元格 ==================== */
+.cell {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-right: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.cell:last-child {
+  border-right: none;
+}
+
+/* 固定列样式 */
+.cell-sticky-left {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+.cell-sticky-right {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  right: 0;
+  z-index: 2;
+}
+
+/* 表头固定列背景 */
+.tree-table-head .cell-sticky-left,
+.tree-table-head .cell-sticky-right {
+  background: #fafafa;
+}
+
+/* 表体固定列背景 */
+.tree-table-row .cell-sticky-left,
+.tree-table-row .cell-sticky-right {
+  background: #fff;
+}
+
+/* 悬停时的固定列背景 */
+.tree-table-row:hover .cell-sticky-left,
+.tree-table-row:hover .cell-sticky-right {
+  background: #fafafa;
+}
+
+/* 固定列阴影效果 */
+.cell-sticky-left::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+  transform: translateX(100%);
+  pointer-events: none;
+  box-shadow: inset 10px 0 8px -8px rgba(0, 0, 0, 0.08);
+}
+
+.cell-sticky-right::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 10px;
+  transform: translateX(-100%);
+  pointer-events: none;
+  box-shadow: inset -10px 0 8px -8px rgba(0, 0, 0, 0.08);
+}
+
+/* 操作列 - 固定宽度不参与flex伸缩 */
+.cell-actions {
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 8px 12px;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
+}
+
+/* 表头操作列 */
+.tree-table-head .cell-actions {
+  padding: 12px;
+}
+
+/* 缩进占位 */
+.indent-space {
+  display: inline-block;
+  flex-shrink: 0;
+  position: relative;
+  height: 100%;
+}
+
+/* ==================== 树形层级线 ==================== */
+.tree-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+/* 竖线 */
+.tree-line-vertical {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: #d9d9d9;
+  transform: translateX(-50%);
+}
+
+/* 转角线（L形） */
+.tree-line-corner {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 50%;
+  background-color: #d9d9d9;
+  transform: translateX(-50%);
+}
+
+.tree-line-corner::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 10px;
+  height: 1px;
+  background-color: #d9d9d9;
+}
+
+/* 单元格文本 */
+.cell-text {
+  color: #333;
+  font-size: 14px;
+}
+
+/* ==================== 表体 ==================== */
+.tree-table-body {
+  background: #fff;
+}
+
+/* 表格行 - 和表头保持相同的flex布局 */
+.tree-table-row {
+  display: flex;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.tree-table-row:last-child {
+  border-bottom: none;
+}
+
+.tree-table-row:hover {
+  background: #fafafa;
+}
+
+/* 空状态 */
+.tree-table-empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+/* ==================== 拖拽状态 ==================== */
+.tree-table-row.dragging {
+  opacity: 0.5;
+  background: #e6f7ff;
+}
+
+.tree-table-row.drop-target {
+  position: relative;
+}
+
+.tree-table-row.drop-target.drop-before::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #1890ff;
+  z-index: 10;
+}
+
+.tree-table-row.drop-target.drop-after::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #1890ff;
+  z-index: 10;
+}
+
+.tree-table-row.drop-target.drop-inside {
+  background: #e6f7ff;
+  box-shadow: inset 0 0 0 2px #1890ff;
+}
+
+/* ==================== 拖拽手柄 ==================== */
+.drag-handle {
+  cursor: grab;
+  color: #bbb;
+  font-size: 14px;
+  padding: 4px 2px;
+  user-select: none;
+  letter-spacing: -3px;
+}
+
+.drag-handle:hover {
+  color: #666;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* ==================== 操作按钮 ==================== */
+.action-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  color: #999;
+}
+
+.action-btn:hover {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.action-btn.add {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.action-btn.add:hover {
+  color: #1890ff;
+}
+
+.action-btn.delete {
+  font-size: 12px;
+}
+
+.action-btn.delete:hover {
+  color: #ff4d4f;
+}
+
+.action-btn.custom {
+  font-size: 14px;
+}
+
+/* ==================== 展开/收起按钮 ==================== */
+.expand-btn {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #999;
+  font-size: 10px;
+  padding: 0;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.expand-btn:hover {
+  color: #d4a574;
+}
+
+.expand-placeholder {
+  width: 16px;
+  min-width: 16px;
+  flex-shrink: 0;
+}
+
+/* ==================== 输入框 ==================== */
+.tree-table-input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  background: transparent;
+  transition: all 0.2s;
+  color: #333;
+  min-width: 0;
+}
+
+.tree-table-input:hover {
+  border-color: #d9d9d9;
+}
+
+.tree-table-input:focus {
+  outline: none;
+  border-color: #1890ff;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.tree-table-input::placeholder {
+  color: #bbb;
+}
+
+/* ==================== 下拉框 ==================== */
+.tree-table-select {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #333;
+}
+
+.tree-table-select:hover {
+  border-color: #40a9ff;
+}
+
+.tree-table-select:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+/* ==================== 复选框 ==================== */
+.tree-table-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #d4a574;
+}
+
+/* ==================== 底部操作栏 ==================== */
+.tree-table-footer {
+  display: flex;
+  gap: 20px;
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.footer-btn {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #d4a574;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.footer-btn:hover {
+  color: #b8956a;
+}
+
+/* ==================== 列宽调整 ==================== */
+.cell.resizable {
+  position: relative;
+}
+
+.column-resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  z-index: 1;
+  transition: background 0.2s;
+}
+
+.column-resizer:hover {
+  background: #1890ff;
+}
+
+.column-resizer:active {
+  background: #1890ff;
+}
+
+/* 调整时的全局样式 */
+body.resizing-column {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+/* ==================== 响应式 ==================== */
+@media (max-width: 768px) {
+  .tree-table-container {
+    margin: 10px;
+  }
+}

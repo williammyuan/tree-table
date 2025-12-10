@@ -1,0 +1,68 @@
+{
+  "name": "@kfb/tree-table",
+  "version": "0.1.0",
+  "description": "React树形表格组件 - 支持拖拽排序、层级调整、列宽调整、虚拟滚动",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles": {
+      "import": "./dist/styles/TreeTable.css",
+      "require": "./dist/styles/TreeTable.css"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "build:watch": "tsdown --watch",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tsdown": "^0.12.1",
+    "typescript": "^5.3.0"
+  },
+  "keywords": [
+    "react",
+    "tree",
+    "table",
+    "tree-table",
+    "drag-and-drop",
+    "sortable",
+    "editable",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "homepage": "",
+  "bugs": {
+    "url": ""
+  },
+  "dependencies": {
+    "immer": "^11.0.1"
+  }
+}

@@ -1,0 +1,29 @@
+.app {
+  padding: 20px;
+}
+
+.app h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #fff;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+}
+
+.footer-btn {
+  padding: 6px 12px;
+  border: 1px solid #444;
+  background: #333;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.footer-btn:hover {
+  background: #444;
+}

@@ -1,0 +1,50 @@
+# 依赖目录
+node_modules/
+
+# 构建产物
+dist/
+build/
+*.tsbuildinfo
+
+# 缓存目录
+.cache/
+.parcel-cache/
+
+# 环境配置
+.env
+.env.local
+.env.*.local
+.envrc
+
+# 编辑器配置
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.code-buddy/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# 测试覆盖率
+coverage/
+
+# Storybook
+storybook-static/
+
+# 包管理缓存
+.pnpm-store/
+
+# 打包产物
+*.tgz
+
+# 临时文件
+*.tmp
+*.temp
