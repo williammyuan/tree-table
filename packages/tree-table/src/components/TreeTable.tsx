@@ -16,6 +16,7 @@ import type {
   FlattenedNode,
   DropPosition,
   ColumnDef,
+  LocaleText,
 } from '../types';
 import { useDragDrop, useVirtualScroll, useColumnResize, useScrollSync } from '../hooks';
 import '../styles/TreeTable.css';
@@ -285,6 +286,9 @@ interface ActionsCellProps<T extends TreeNode> {
   collapseIcon?: React.ReactNode;
   addIcon?: React.ReactNode;
   deleteIcon?: React.ReactNode;
+  dragHandleTitle: string;
+  addChildTitle: string;
+  deleteNodeTitle: string;
   customActions: Array<{
     key: string;
     icon?: React.ReactNode;
@@ -311,6 +315,9 @@ const ActionsCell = React.memo(function ActionsCell<T extends TreeNode>({
   collapseIcon,
   addIcon,
   deleteIcon,
+  dragHandleTitle,
+  addChildTitle,
+  deleteNodeTitle,
   customActions,
   onToggleExpand,
   onAddChild,
@@ -341,13 +348,13 @@ const ActionsCell = React.memo(function ActionsCell<T extends TreeNode>({
         )
       )}
       {showDragHandle && dragEnabled && (
-        <span className="drag-handle" title="拖拽排序">⋮⋮</span>
+        <span className="drag-handle" title={dragHandleTitle}>⋮⋮</span>
       )}
       {showAddButton && (
         <button
           className="action-btn add"
           onClick={handleAddChild}
-          title="添加子参数"
+          title={addChildTitle}
         >
           {addIcon ?? '+'}
         </button>
@@ -356,7 +363,7 @@ const ActionsCell = React.memo(function ActionsCell<T extends TreeNode>({
         <button
           className="action-btn delete"
           onClick={handleDelete}
-          title="删除节点"
+          title={deleteNodeTitle}
         >
           {deleteIcon ?? '🗑'}
         </button>
@@ -621,6 +628,7 @@ function TreeTableInner<T extends TreeNode>(
     collapseIcon,
     addIcon,
     deleteIcon,
+    localeText,
     footer,
     onChange,
     onAdd,
@@ -638,9 +646,14 @@ function TreeTableInner<T extends TreeNode>(
     rowStyle,
     headerClassName = '',
     indentSize = 20,
-    emptyText = '暂无数据',
+    emptyText = 'No data',
     showTreeLine = true,
   } = props;
+
+  const resolvedLocale: LocaleText = localeText ?? {};
+  const dragHandleTitle = resolvedLocale.dragHandleTitle ?? 'Drag to sort';
+  const addChildTitle = resolvedLocale.addChildTitle ?? 'Add child';
+  const deleteNodeTitle = resolvedLocale.deleteNodeTitle ?? 'Delete node';
 
   // ========== 状态 ==========
   const [state, dispatch] = useReducer(
@@ -1137,6 +1150,9 @@ function TreeTableInner<T extends TreeNode>(
           collapseIcon={collapseIcon}
           addIcon={addIcon}
           deleteIcon={deleteIcon}
+          dragHandleTitle={dragHandleTitle}
+          addChildTitle={addChildTitle}
+          deleteNodeTitle={deleteNodeTitle}
           customActions={stableCustomActions}
           onToggleExpand={toggleExpand}
           onAddChild={addChildNode}
@@ -1161,6 +1177,9 @@ function TreeTableInner<T extends TreeNode>(
       toggleExpand,
       addChildNode,
       deleteNode,
+      dragHandleTitle,
+      addChildTitle,
+      deleteNodeTitle,
     ]
   );
 

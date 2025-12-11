@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TreeTable, TreeTableRef, TreeNode, ColumnDef } from '../index';
 
-/** API 参数节点类型 */
+/** API parameter node type used in examples */
 interface ApiParamNode extends TreeNode {
   type: string;
   required: boolean;
@@ -21,14 +21,14 @@ const TYPE_OPTIONS = [
   { label: 'double', value: 'double' },
 ];
 
-const initialData: ApiParamNode[] = [
+const createInitialData = (isZh: boolean): ApiParamNode[] => [
   {
     id: '1',
     name: 'success',
     type: 'boolean',
     required: true,
     defaultValue: 'true',
-    description: '是否成功',
+    description: isZh ? '是否成功' : 'Whether the request succeeds',
   },
   {
     id: '2',
@@ -36,7 +36,7 @@ const initialData: ApiParamNode[] = [
     type: 'string',
     required: true,
     defaultValue: 'ok',
-    description: '错误/成功提示',
+    description: isZh ? '错误或成功提示' : 'Error or success message',
   },
   {
     id: '3',
@@ -44,7 +44,7 @@ const initialData: ApiParamNode[] = [
     type: 'object',
     required: true,
     defaultValue: '',
-    description: '数据对象',
+    description: isZh ? '数据对象' : 'Payload object',
     children: [
       {
         id: '3-1',
@@ -52,7 +52,7 @@ const initialData: ApiParamNode[] = [
         type: 'array[object]',
         required: true,
         defaultValue: '',
-        description: '数据列表',
+        description: isZh ? '数据列表' : 'List of items',
         children: [
           {
             id: '3-1-1',
@@ -60,7 +60,7 @@ const initialData: ApiParamNode[] = [
             type: 'int64',
             required: true,
             defaultValue: '',
-            description: 'ID',
+            description: isZh ? 'ID' : 'Item ID',
           },
           {
             id: '3-1-2',
@@ -68,7 +68,7 @@ const initialData: ApiParamNode[] = [
             type: 'string',
             required: true,
             defaultValue: '',
-            description: '名称',
+            description: isZh ? '名称' : 'Item name',
           },
         ],
       },
@@ -76,10 +76,10 @@ const initialData: ApiParamNode[] = [
   },
 ];
 
-const columns: ColumnDef<ApiParamNode>[] = [
+const createColumns = (isZh: boolean): ColumnDef<ApiParamNode>[] => [
   {
     key: 'name',
-    title: '名称',
+    title: isZh ? '名称' : 'Name',
     flex: 2,
     minWidth: 180,
     render: (value, _node, onChange) => (
@@ -87,14 +87,14 @@ const columns: ColumnDef<ApiParamNode>[] = [
         type="text"
         className="tree-table-input"
         value={typeof value === 'string' ? value : ''}
-        placeholder="请输入名称"
+        placeholder={isZh ? '请输入名称' : 'Enter name'}
         onChange={(e) => onChange(e.target.value)}
       />
     ),
   },
   {
     key: 'type',
-    title: '类型',
+    title: isZh ? '类型' : 'Type',
     width: 140,
     render: (value, _node, onChange) => (
       <select
@@ -112,7 +112,7 @@ const columns: ColumnDef<ApiParamNode>[] = [
   },
   {
     key: 'required',
-    title: '必填',
+    title: isZh ? '必填' : 'Required',
     width: 80,
     align: 'center',
     render: (value, _node, onChange) => (
@@ -126,21 +126,21 @@ const columns: ColumnDef<ApiParamNode>[] = [
   },
   {
     key: 'defaultValue',
-    title: '默认值',
+    title: isZh ? '默认值' : 'Default',
     width: 120,
     render: (value, _node, onChange) => (
       <input
         type="text"
         className="tree-table-input"
         value={typeof value === 'string' ? value : ''}
-        placeholder="默认值"
+        placeholder={isZh ? '默认值' : 'Default value'}
         onChange={(e) => onChange(e.target.value)}
       />
     ),
   },
   {
     key: 'description',
-    title: '描述',
+    title: isZh ? '描述' : 'Description',
     flex: 1.5,
     minWidth: 180,
     render: (value, _node, onChange) => (
@@ -148,20 +148,42 @@ const columns: ColumnDef<ApiParamNode>[] = [
         type="text"
         className="tree-table-input"
         value={typeof value === 'string' ? value : ''}
-        placeholder="请输入描述"
+        placeholder={isZh ? '请输入描述' : 'Enter description'}
         onChange={(e) => onChange(e.target.value)}
       />
     ),
   },
 ];
 
+const getLocaleText = (isZh: boolean) =>
+  isZh
+    ? {
+        dragHandleTitle: '拖拽排序',
+        addChildTitle: '添加子节点',
+        deleteNodeTitle: '删除节点',
+      }
+    : {
+        dragHandleTitle: 'Drag to sort',
+        addChildTitle: 'Add child',
+        deleteNodeTitle: 'Delete node',
+      };
+
+const createNewNode = (isZh: boolean): ApiParamNode => ({
+  id: `node-${Date.now()}`,
+  name: isZh ? '新字段' : 'newField',
+  type: 'string',
+  required: false,
+  defaultValue: '',
+  description: isZh ? '描述' : '',
+});
+
 /**
- * TreeTable 是一个功能强大的树形表格组件，支持：
- * - 🌲 树形数据展示与编辑
- * - 🔀 拖拽排序与层级调整
- * - ↔️ 列宽调整
- * - 📜 固定表头滚动
- * - 🎨 完全自定义渲染
+ * TreeTable is a powerful tree table component that supports:
+ * - 🌲 Tree data display and inline editing
+ * - 🔀 Drag-and-drop sorting and level adjustments
+ * - ↔️ Column resizing
+ * - 📜 Sticky header with scrollable body
+ * - 🎨 Fully custom rendering
  */
 const meta: Meta<typeof TreeTable> = {
   title: 'Components/TreeTable',
@@ -171,28 +193,30 @@ const meta: Meta<typeof TreeTable> = {
     docs: {
       description: {
         component: `
-## 安装
+## Install
 
 \`\`\`bash
 pnpm add @kfb/tree-table
 \`\`\`
 
-## 使用
+## Usage
 
 \`\`\`tsx
 import { TreeTable, TreeNode, ColumnDef } from '@kfb/tree-table';
 import '@kfb/tree-table/styles';
 
 interface MyNode extends TreeNode {
-  // 自定义字段
+  // custom fields
 }
 
 const columns: ColumnDef<MyNode>[] = [
-  // 列配置
+  // column config
 ];
 
 <TreeTable data={data} columns={columns} />
 \`\`\`
+
+Looking for Chinese docs? See the repository README.zh.md files.
         `,
       },
     },
@@ -200,31 +224,31 @@ const columns: ColumnDef<MyNode>[] = [
   tags: ['autodocs'],
   argTypes: {
     data: {
-      description: '树形数据',
+      description: 'Tree data source',
       control: 'object',
     },
     columns: {
-      description: '列配置',
+      description: 'Column definitions',
       control: 'object',
     },
     draggable: {
-      description: '是否启用拖拽',
+      description: 'Enable drag-and-drop',
       control: 'boolean',
     },
     resizable: {
-      description: '是否启用列宽调整',
+      description: 'Enable column resizing',
       control: 'boolean',
     },
     showActions: {
-      description: '是否显示操作列',
+      description: 'Show action column',
       control: 'boolean',
     },
     defaultExpandAll: {
-      description: '默认展开全部',
+      description: 'Expand all by default',
       control: 'boolean',
     },
     indentSize: {
-      description: '缩进大小（像素）',
+      description: 'Indent size (px)',
       control: { type: 'number', min: 0, max: 50 },
     },
   },
@@ -233,26 +257,25 @@ const columns: ColumnDef<MyNode>[] = [
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** 基础用法 - 展示树形表格的基本功能 */
+/** Basic usage - showcase the core features */
 export const Basic: Story = {
-  render: () => {
-    const [data, setData] = useState<ApiParamNode[]>(initialData);
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const [data, setData] = useState<ApiParamNode[]>(() => createInitialData(isZh));
+    const columns = createColumns(isZh);
+    const localeText = getLocaleText(isZh);
 
-    const createNewNode = (): ApiParamNode => ({
-      id: `node-${Date.now()}`,
-      name: 'newField',
-      type: 'string',
-      required: false,
-      defaultValue: '',
-      description: '',
-    });
+    useEffect(() => {
+      setData(createInitialData(isZh));
+    }, [isZh]);
 
     return (
       <TreeTable<ApiParamNode>
         data={data}
         columns={columns}
+        localeText={localeText}
         onChange={setData}
-        onAdd={() => createNewNode()}
+        onAdd={() => createNewNode(isZh)}
         showActions
         defaultExpandedKeys={['3', '3-1']}
       />
@@ -260,26 +283,25 @@ export const Basic: Story = {
   },
 };
 
-/** 启用拖拽排序 - 可以拖动行调整顺序和层级 */
+/** Drag-and-drop sorting - reorder rows and levels */
 export const WithDraggable: Story = {
-  render: () => {
-    const [data, setData] = useState<ApiParamNode[]>(initialData);
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const [data, setData] = useState<ApiParamNode[]>(() => createInitialData(isZh));
+    const columns = createColumns(isZh);
+    const localeText = getLocaleText(isZh);
 
-    const createNewNode = (): ApiParamNode => ({
-      id: `node-${Date.now()}`,
-      name: 'newField',
-      type: 'string',
-      required: false,
-      defaultValue: '',
-      description: '',
-    });
+    useEffect(() => {
+      setData(createInitialData(isZh));
+    }, [isZh]);
 
     return (
       <TreeTable<ApiParamNode>
         data={data}
         columns={columns}
+        localeText={localeText}
         onChange={setData}
-        onAdd={() => createNewNode()}
+        onAdd={() => createNewNode(isZh)}
         draggable
         showActions
         defaultExpandedKeys={['3', '3-1']}
@@ -288,26 +310,25 @@ export const WithDraggable: Story = {
   },
 };
 
-/** 启用列宽调整 - 可以通过拖动列边框调整列宽 */
+/** Column resizing - drag column borders to resize */
 export const WithResizable: Story = {
-  render: () => {
-    const [data, setData] = useState<ApiParamNode[]>(initialData);
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const [data, setData] = useState<ApiParamNode[]>(() => createInitialData(isZh));
+    const columns = createColumns(isZh);
+    const localeText = getLocaleText(isZh);
 
-    const createNewNode = (): ApiParamNode => ({
-      id: `node-${Date.now()}`,
-      name: 'newField',
-      type: 'string',
-      required: false,
-      defaultValue: '',
-      description: '',
-    });
+    useEffect(() => {
+      setData(createInitialData(isZh));
+    }, [isZh]);
 
     return (
       <TreeTable<ApiParamNode>
         data={data}
         columns={columns}
+        localeText={localeText}
         onChange={setData}
-        onAdd={() => createNewNode()}
+        onAdd={() => createNewNode(isZh)}
         resizable
         showActions
         defaultExpandedKeys={['3', '3-1']}
@@ -316,26 +337,25 @@ export const WithResizable: Story = {
   },
 };
 
-/** 滚动配置 - 表头固定，表体可滚动 */
+/** Scroll configuration - sticky header with scrollable body */
 export const WithScroll: Story = {
-  render: () => {
-    const [data, setData] = useState<ApiParamNode[]>(initialData);
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const [data, setData] = useState<ApiParamNode[]>(() => createInitialData(isZh));
+    const columns = createColumns(isZh);
+    const localeText = getLocaleText(isZh);
 
-    const createNewNode = (): ApiParamNode => ({
-      id: `node-${Date.now()}`,
-      name: 'newField',
-      type: 'string',
-      required: false,
-      defaultValue: '',
-      description: '',
-    });
+    useEffect(() => {
+      setData(createInitialData(isZh));
+    }, [isZh]);
 
     return (
       <TreeTable<ApiParamNode>
         data={data}
         columns={columns}
+        localeText={localeText}
         onChange={setData}
-        onAdd={() => createNewNode()}
+        onAdd={() => createNewNode(isZh)}
         showActions
         defaultExpandedKeys={['3', '3-1']}
         scroll={{ maxHeight: 300, minWidth: 900 }}
@@ -344,26 +364,25 @@ export const WithScroll: Story = {
   },
 };
 
-/** 自定义图标 - 自定义折叠/展开、添加、删除图标 */
+/** Custom icons - override expand/collapse/add/delete icons */
 export const CustomIcons: Story = {
-  render: () => {
-    const [data, setData] = useState<ApiParamNode[]>(initialData);
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const [data, setData] = useState<ApiParamNode[]>(() => createInitialData(isZh));
+    const columns = createColumns(isZh);
+    const localeText = getLocaleText(isZh);
 
-    const createNewNode = (): ApiParamNode => ({
-      id: `node-${Date.now()}`,
-      name: 'newField',
-      type: 'string',
-      required: false,
-      defaultValue: '',
-      description: '',
-    });
+    useEffect(() => {
+      setData(createInitialData(isZh));
+    }, [isZh]);
 
     return (
       <TreeTable<ApiParamNode>
         data={data}
         columns={columns}
+        localeText={localeText}
         onChange={setData}
-        onAdd={() => createNewNode()}
+        onAdd={() => createNewNode(isZh)}
         showActions
         defaultExpandedKeys={['3', '3-1']}
         expandIcon="➕"
@@ -375,10 +394,13 @@ export const CustomIcons: Story = {
   },
 };
 
-/** 虚拟滚动 - 大数据量场景下的性能优化 */
+/** Virtual scroll - performance for large datasets */
 export const VirtualScroll: Story = {
-  render: () => {
-    // 生成大量数据
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const columns = createColumns(isZh);
+    const localeText = getLocaleText(isZh);
+
     const generateLargeData = (): ApiParamNode[] => {
       const data: ApiParamNode[] = [];
       for (let i = 0; i < 100; i++) {
@@ -388,10 +410,10 @@ export const VirtualScroll: Story = {
           type: i % 2 === 0 ? 'string' : 'object',
           required: i % 3 === 0,
           defaultValue: `value_${i}`,
-          description: `这是第 ${i} 个字段的描述`,
+          description: isZh ? `第 ${i} 个字段的描述` : `Description for field ${i}`,
         };
         
-        // 部分节点添加子节点
+        // Add children for some nodes
         if (i % 5 === 0 && i < 50) {
           node.children = [];
           for (let j = 0; j < 10; j++) {
@@ -401,7 +423,7 @@ export const VirtualScroll: Story = {
               type: 'string',
               required: false,
               defaultValue: '',
-              description: `子字段 ${j}`,
+              description: isZh ? `子字段 ${j}` : `Child field ${j}`,
             });
           }
         }
@@ -413,26 +435,24 @@ export const VirtualScroll: Story = {
 
     const [data, setData] = useState<ApiParamNode[]>(generateLargeData);
 
-    const createNewNode = (): ApiParamNode => ({
-      id: `node-${Date.now()}`,
-      name: 'newField',
-      type: 'string',
-      required: false,
-      defaultValue: '',
-      description: '',
-    });
+    useEffect(() => {
+      setData(generateLargeData());
+    }, [isZh]);
 
     return (
       <div>
         <div style={{ marginBottom: '12px', padding: '8px', background: '#f0f0f0', borderRadius: '4px' }}>
-          <strong>提示：</strong>虚拟滚动模式下，只渲染可见区域的行，大幅提升大数据量场景的性能。
-          当前数据量：{data.length} 条根节点
+          <strong>{isZh ? '提示：' : 'Tip:'}</strong>
+          {isZh ? '虚拟滚动只渲染可见行以提升性能。' : 'Virtual scroll only renders visible rows to improve performance.'}
+          {isZh ? ' 当前根节点数：' : ' Current root nodes: '}
+          {data.length}
         </div>
         <TreeTable<ApiParamNode>
           data={data}
           columns={columns}
+          localeText={localeText}
           onChange={setData}
-          onAdd={() => createNewNode()}
+          onAdd={() => createNewNode(isZh)}
           showActions
           defaultExpandAll
           scroll={{
@@ -448,20 +468,18 @@ export const VirtualScroll: Story = {
   },
 };
 
-/** 显示层级竖线 - 展示树形结构的层级关系 */
+/** Tree lines - visualize hierarchy connectors */
 export const WithTreeLine: Story = {
-  render: () => {
-    const [data, setData] = useState<ApiParamNode[]>(initialData);
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const [data, setData] = useState<ApiParamNode[]>(() => createInitialData(isZh));
     const [showTreeLine, setShowTreeLine] = useState(true);
+    const columns = createColumns(isZh);
+    const localeText = getLocaleText(isZh);
 
-    const createNewNode = (): ApiParamNode => ({
-      id: `node-${Date.now()}`,
-      name: 'newField',
-      type: 'string',
-      required: false,
-      defaultValue: '',
-      description: '',
-    });
+    useEffect(() => {
+      setData(createInitialData(isZh));
+    }, [isZh]);
 
     return (
       <div>
@@ -472,14 +490,15 @@ export const WithTreeLine: Story = {
               checked={showTreeLine}
               onChange={(e) => setShowTreeLine(e.target.checked)}
             />
-            <span style={{ marginLeft: '4px' }}>显示层级竖线</span>
+            <span style={{ marginLeft: '4px' }}>{isZh ? '显示层级竖线' : 'Show tree guide lines'}</span>
           </label>
         </div>
         <TreeTable<ApiParamNode>
           data={data}
           columns={columns}
+          localeText={localeText}
           onChange={setData}
-          onAdd={() => createNewNode()}
+          onAdd={() => createNewNode(isZh)}
           showActions
           showTreeLine={showTreeLine}
           defaultExpandedKeys={['3', '3-1']}
@@ -489,40 +508,37 @@ export const WithTreeLine: Story = {
   },
 };
 
-/** 列固定 - 左右固定列，多列时操作列始终可见 */
+/** Sticky columns - keep columns visible while scrolling */
 export const StickyColumns: Story = {
-  render: () => {
-    const [data, setData] = useState<ApiParamNode[]>(initialData);
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const [data, setData] = useState<ApiParamNode[]>(() => createInitialData(isZh));
+    const localeText = getLocaleText(isZh);
 
-    const createNewNode = (): ApiParamNode => ({
-      id: `node-${Date.now()}`,
-      name: 'newField',
-      type: 'string',
-      required: false,
-      defaultValue: '',
-      description: '',
-    });
+    useEffect(() => {
+      setData(createInitialData(isZh));
+    }, [isZh]);
 
-    // 配置固定列
+    // Configure sticky columns
     const stickyColumns: ColumnDef<ApiParamNode>[] = [
       {
         key: 'name',
-        title: '名称',
+        title: isZh ? '名称' : 'Name',
         width: 180,
-        sticky: 'left', // 左侧固定
+        sticky: 'left', // pin left
         render: (value, _node, onChange) => (
           <input
             type="text"
             className="tree-table-input"
             value={typeof value === 'string' ? value : ''}
-            placeholder="请输入名称"
+            placeholder={isZh ? '请输入名称' : 'Enter name'}
             onChange={(e) => onChange(e.target.value)}
           />
         ),
       },
       {
         key: 'type',
-        title: '类型',
+        title: isZh ? '类型' : 'Type',
         width: 140,
         render: (value, _node, onChange) => (
           <select
@@ -540,7 +556,7 @@ export const StickyColumns: Story = {
       },
       {
         key: 'required',
-        title: '必填',
+        title: isZh ? '必填' : 'Required',
         width: 80,
         align: 'center',
         render: (value, _node, onChange) => (
@@ -554,29 +570,29 @@ export const StickyColumns: Story = {
       },
       {
         key: 'defaultValue',
-        title: '默认值',
+        title: isZh ? '默认值' : 'Default',
         width: 120,
         render: (value, _node, onChange) => (
           <input
             type="text"
             className="tree-table-input"
             value={typeof value === 'string' ? value : ''}
-            placeholder="默认值"
+            placeholder={isZh ? '默认值' : 'Default value'}
             onChange={(e) => onChange(e.target.value)}
           />
         ),
       },
       {
         key: 'description',
-        title: '描述',
+        title: isZh ? '描述' : 'Description',
         width: 200,
-        sticky: 'right', // 右侧固定
+        sticky: 'right', // pin right
         render: (value, _node, onChange) => (
           <input
             type="text"
             className="tree-table-input"
             value={typeof value === 'string' ? value : ''}
-            placeholder="请输入描述"
+            placeholder={isZh ? '请输入描述' : 'Enter description'}
             onChange={(e) => onChange(e.target.value)}
           />
         ),
@@ -586,15 +602,18 @@ export const StickyColumns: Story = {
     return (
       <div>
         <div style={{ marginBottom: '12px', padding: '8px', background: '#f0f0f0', borderRadius: '4px' }}>
-          <strong>提示：</strong>名称列左侧固定，描述列右侧固定。横向滚动时这些列会保持可见。
-          操作列在左侧也会固定。<strong>请横向滚动表格查看效果！</strong>
+          <strong>{isZh ? '提示：' : 'Tip:'}</strong>{' '}
+          {isZh
+            ? '名称列左侧固定，描述列右侧固定，操作列保持可见。横向滚动查看效果。'
+            : 'Name column is pinned left, description pinned right, and the action column stays visible. Scroll horizontally to see the effect.'}
         </div>
         <div style={{ width: '600px', border: '2px solid #1890ff', overflow: 'auto' }}>
           <TreeTable<ApiParamNode>
             data={data}
             columns={stickyColumns}
+            localeText={localeText}
             onChange={setData}
-            onAdd={() => createNewNode()}
+            onAdd={() => createNewNode(isZh)}
             showActions
             actionsPosition="start"
             defaultExpandedKeys={['3', '3-1']}
@@ -606,47 +625,55 @@ export const StickyColumns: Story = {
   },
 };
 
-/** 完整示例 - 包含所有功能的演示 */
+/** Full feature demo - showcases every capability */
 export const FullFeature: Story = {
-  render: () => {
-    const [data, setData] = useState<ApiParamNode[]>(initialData);
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const tr = <T extends string>(zh: T, en: T): T => (isZh ? zh : en);
+
+    const [data, setData] = useState<ApiParamNode[]>(() => createInitialData(isZh));
     const tableRef = useRef<TreeTableRef<ApiParamNode>>(null);
     const [showTreeLine, setShowTreeLine] = useState(true);
     const [actionsPosition, setActionsPosition] = useState<'start' | 'end'>('start');
     const [indentSize, setIndentSize] = useState(20);
+    const localeText = getLocaleText(isZh);
+
+    useEffect(() => {
+      setData(createInitialData(isZh));
+    }, [isZh]);
 
     const createNewNode = (): ApiParamNode => ({
       id: `node-${Date.now()}`,
-      name: 'newField',
+      name: tr('新字段', 'newField'),
       type: 'string',
       required: true,
       defaultValue: '',
-      description: '新增字段',
+      description: tr('新增字段', 'New field'),
     });
 
-    // 配置固定列
+    // Configure sticky and resizable columns
     const fullFeatureColumns: ColumnDef<ApiParamNode>[] = [
       {
         key: 'name',
-        title: '名称',
+        title: tr('名称', 'Name'),
         width: 180,
         minWidth: 120,
         maxWidth: 300,
-        sticky: 'left', // 左侧固定
+        sticky: 'left', // pin left
         resizable: true,
         render: (value, _node, onChange) => (
           <input
             type="text"
             className="tree-table-input"
             value={typeof value === 'string' ? value : ''}
-            placeholder="请输入名称"
+            placeholder={tr('请输入名称', 'Enter name')}
             onChange={(e) => onChange(e.target.value)}
           />
         ),
       },
       {
         key: 'type',
-        title: '类型',
+        title: tr('类型', 'Type'),
         width: 140,
         minWidth: 100,
         resizable: true,
@@ -666,7 +693,7 @@ export const FullFeature: Story = {
       },
       {
         key: 'required',
-        title: '必填',
+        title: tr('必填', 'Required'),
         width: 80,
         align: 'center',
         render: (value, _node, onChange) => (
@@ -680,7 +707,7 @@ export const FullFeature: Story = {
       },
       {
         key: 'defaultValue',
-        title: '默认值',
+        title: tr('默认值', 'Default'),
         width: 150,
         minWidth: 100,
         resizable: true,
@@ -689,24 +716,24 @@ export const FullFeature: Story = {
             type="text"
             className="tree-table-input"
             value={typeof value === 'string' ? value : ''}
-            placeholder="默认值"
+            placeholder={tr('默认值', 'Default value')}
             onChange={(e) => onChange(e.target.value)}
           />
         ),
       },
       {
         key: 'description',
-        title: '描述',
+        title: tr('描述', 'Description'),
         width: 200,
         minWidth: 150,
-        sticky: 'right', // 右侧固定
+        sticky: 'right', // pin right
         resizable: true,
         render: (value, _node, onChange) => (
           <input
             type="text"
             className="tree-table-input"
             value={typeof value === 'string' ? value : ''}
-            placeholder="请输入描述"
+            placeholder={tr('请输入描述', 'Enter description')}
             onChange={(e) => onChange(e.target.value)}
           />
         ),
@@ -715,7 +742,7 @@ export const FullFeature: Story = {
 
     return (
       <div style={{ padding: '20px' }}>
-        {/* 控制面板 */}
+        {/* Control panel */}
         <div style={{ 
           marginBottom: '16px', 
           padding: '16px', 
@@ -726,7 +753,7 @@ export const FullFeature: Story = {
           gap: '12px'
         }}>
           <div>
-            <strong style={{ display: 'block', marginBottom: '8px' }}>🎛️ 控制面板</strong>
+            <strong style={{ display: 'block', marginBottom: '8px' }}>🎛️ {tr('控制面板', 'Controls')}</strong>
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -736,24 +763,24 @@ export const FullFeature: Story = {
                 checked={showTreeLine}
                 onChange={(e) => setShowTreeLine(e.target.checked)}
               />
-              显示层级线
+              {tr('显示层级线', 'Show tree lines')}
             </label>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label>操作列位置：</label>
+            <label>{tr('操作列位置：', 'Actions column position:')}</label>
             <select 
               value={actionsPosition} 
               onChange={(e) => setActionsPosition(e.target.value as 'start' | 'end')}
               style={{ padding: '4px 8px' }}
             >
-              <option value="start">左侧</option>
-              <option value="end">右侧</option>
+              <option value="start">{tr('左侧', 'Left')}</option>
+              <option value="end">{tr('右侧', 'Right')}</option>
             </select>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label>缩进大小：</label>
+            <label>{tr('缩进大小：', 'Indent size:')}</label>
             <input
               type="range"
               min="10"
@@ -766,7 +793,7 @@ export const FullFeature: Story = {
           </div>
         </div>
 
-        {/* 功能说明 */}
+        {/* Feature overview */}
         <div style={{ 
           marginBottom: '16px', 
           padding: '16px', 
@@ -774,24 +801,26 @@ export const FullFeature: Story = {
           borderRadius: '8px',
           border: '1px solid #91d5ff'
         }}>
-          <strong style={{ display: 'block', marginBottom: '8px' }}>✨ 本示例包含的所有功能：</strong>
+          <strong style={{ display: 'block', marginBottom: '8px' }}>
+            {tr('✨ 本示例包含的所有功能：', '✨ Features included in this demo:')}
+          </strong>
           <ul style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.8' }}>
-            <li><strong>数据管理：</strong>支持添加、删除、编辑节点</li>
-            <li><strong>拖拽排序：</strong>拖动行可调整顺序和层级关系</li>
-            <li><strong>列宽调整：</strong>拖动列边框可调整列宽</li>
-            <li><strong>列固定：</strong>名称列左侧固定，描述列右侧固定</li>
-            <li><strong>虚拟滚动：</strong>表头固定，表体可滚动（横向和纵向）</li>
-            <li><strong>树形层级：</strong>支持多层嵌套，显示层级线条</li>
-            <li><strong>自定义渲染：</strong>每列都可自定义渲染组件</li>
-            <li><strong>自定义操作：</strong>支持自定义操作按钮</li>
-            <li><strong>自定义图标：</strong>展开/收起、添加、删除图标可自定义</li>
-            <li><strong>样式定制：</strong>支持自定义类名、样式、行样式等</li>
-            <li><strong>事件回调：</strong>完整的生命周期回调</li>
-            <li><strong>Ref 方法：</strong>通过 ref 调用组件方法</li>
+            <li><strong>{tr('数据管理：', 'Data management:')}</strong> {tr('支持添加、删除、编辑节点', 'add, delete, and edit nodes')}</li>
+            <li><strong>{tr('拖拽排序：', 'Drag-and-drop:')}</strong> {tr('拖动行可调整顺序和层级关系', 'reorder rows and levels')}</li>
+            <li><strong>{tr('列宽调整：', 'Resizable columns:')}</strong> {tr('拖动列边框可调整列宽', 'drag borders to resize')}</li>
+            <li><strong>{tr('列固定：', 'Sticky columns:')}</strong> {tr('名称列左侧固定，描述列右侧固定', 'name pinned left, description pinned right')}</li>
+            <li><strong>{tr('虚拟滚动：', 'Virtual scroll:')}</strong> {tr('表头固定，表体可滚动（横向和纵向）', 'sticky header with horizontal/vertical scrolling')}</li>
+            <li><strong>{tr('树形层级：', 'Tree lines:')}</strong> {tr('支持多层嵌套，显示层级线条', 'multi-level nesting with guide lines')}</li>
+            <li><strong>{tr('自定义渲染：', 'Custom render:')}</strong> {tr('每列都可自定义渲染组件', 'every column supports custom components')}</li>
+            <li><strong>{tr('自定义操作：', 'Custom actions:')}</strong> {tr('支持自定义操作按钮', 'add your own action buttons')}</li>
+            <li><strong>{tr('自定义图标：', 'Custom icons:')}</strong> {tr('展开/收起、添加、删除图标可自定义', 'expand/collapse/add/delete icons configurable')}</li>
+            <li><strong>{tr('样式定制：', 'Styling:')}</strong> {tr('支持自定义类名、样式、行样式等', 'custom class names, styles, and row styles')}</li>
+            <li><strong>{tr('事件回调：', 'Callbacks:')}</strong> {tr('完整的生命周期回调', 'full lifecycle callbacks')}</li>
+            <li><strong>{tr('Ref 方法：', 'Ref methods:')}</strong> {tr('通过 ref 调用组件方法', 'call component methods via ref')}</li>
           </ul>
         </div>
 
-        {/* 表格容器 - 限制宽度以展示横向滚动 */}
+        {/* Table container - constrained width to show horizontal scroll */}
         <div style={{ 
           border: '2px solid #1890ff', 
           borderRadius: '8px',
@@ -799,14 +828,14 @@ export const FullFeature: Story = {
         }}>
           <TreeTable<ApiParamNode>
             ref={tableRef}
-            // ========== 数据相关 ==========
+            // ========== Data ==========
             data={data}
             defaultExpandedKeys={['3', '3-1']}
             
-            // ========== 列配置 ==========
+            // ========== Columns ==========
             columns={fullFeatureColumns}
             
-            // ========== 操作列配置 ==========
+            // ========== Action column ==========
             showActions
             actionsWidth={120}
             actionsPosition={actionsPosition}
@@ -818,30 +847,36 @@ export const FullFeature: Story = {
               {
                 key: 'copy',
                 icon: '📋',
-                title: '复制节点',
+                title: tr('复制节点', 'Copy node'),
                 onClick: (node) => {
                   const newNode = { ...node, id: `node-${Date.now()}`, name: `${node.name}_copy` };
                   tableRef.current?.addSiblingNode(newNode, node.id);
                 },
-                visible: (node) => true,
+                visible: () => true,
               },
               {
                 key: 'info',
                 icon: 'ℹ️',
-                title: '查看详情',
+                title: tr('查看详情', 'View details'),
                 onClick: (node) => {
-                  alert(`节点信息：\nID: ${node.id}\n名称: ${node.name}\n类型: ${node.type}`);
+                  alert(
+                    tr(
+                      `节点信息：\nID: ${node.id}\n名称: ${node.name}\n类型: ${node.type}`,
+                      `Node info:\nID: ${node.id}\nName: ${node.name}\nType: ${node.type}`
+                    )
+                  );
                 },
               },
             ]}
             
-            // ========== 自定义图标 ==========
+            // ========== Icons ==========
             expandIcon="➕"
             collapseIcon="➖"
             addIcon="✨"
             deleteIcon="🗑️"
+            localeText={localeText}
             
-            // ========== 底部区域 ==========
+            // ========== Footer ==========
             footer={
               <div style={{ 
                 display: 'flex', 
@@ -854,125 +889,133 @@ export const FullFeature: Story = {
                   onClick={() => tableRef.current?.addRootNode(createNewNode())}
                   style={{ padding: '6px 12px', cursor: 'pointer' }}
                 >
-                  ➕ 添加根节点
+                  {tr('➕ 添加根节点', '➕ Add root')}
                 </button>
                 <button 
                   onClick={() => tableRef.current?.expandAll()}
                   style={{ padding: '6px 12px', cursor: 'pointer' }}
                 >
-                  📂 展开全部
+                  {tr('📂 展开全部', '📂 Expand all')}
                 </button>
                 <button 
                   onClick={() => tableRef.current?.collapseAll()}
                   style={{ padding: '6px 12px', cursor: 'pointer' }}
                 >
-                  📁 收起全部
+                  {tr('📁 收起全部', '📁 Collapse all')}
                 </button>
                 <button 
                   onClick={() => {
                     const currentData = tableRef.current?.getData();
-                    console.log('当前数据：', currentData);
-                    alert(`数据已输出到控制台，共 ${currentData?.length} 个根节点`);
+                    console.log('Current data:', currentData);
+                    alert(
+                      tr(
+                        `数据已输出到控制台，共 ${currentData?.length} 个根节点`,
+                        `Data printed to console, ${currentData?.length} root nodes`
+                      )
+                    );
                   }}
                   style={{ padding: '6px 12px', cursor: 'pointer' }}
                 >
-                  📊 导出数据
+                  {tr('📊 导出数据', '📊 Export data')}
                 </button>
               </div>
             }
             
-            // ========== 事件回调 ==========
+            // ========== Events ==========
             onChange={(newData) => {
-              console.log('数据变化：', newData);
+              console.log('Data changed:', newData);
               setData(newData);
             }}
             onAdd={(parentId) => {
-              console.log('添加节点，父节点ID：', parentId);
+              console.log('Add node, parent ID:', parentId);
               return createNewNode();
             }}
             onDelete={(node) => {
-              console.log('删除节点：', node);
-              const confirmed = window.confirm(`确定要删除节点 "${node.name}" 吗？`);
+              console.log('Delete node:', node);
+              const confirmed = window.confirm(tr(
+                `确定要删除节点 "${node.name}" 吗？`,
+                `Delete node "${node.name}"?`
+              ));
               return confirmed;
             }}
             onNodeChange={(node, field, value) => {
-              console.log('节点字段变化：', { node, field, value });
+              console.log('Node field changed:', { node, field, value });
             }}
             onExpand={(node, expanded) => {
-              console.log(`节点 ${expanded ? '展开' : '收起'}：`, node);
+              console.log(`Node ${expanded ? 'expanded' : 'collapsed'}:`, node);
             }}
             onDrop={(info) => {
-              console.log('拖拽完成：', info);
+              console.log('Drag finished:', info);
             }}
             
-            // ========== 拖拽配置 ==========
+            // ========== Drag config ==========
             draggable={{
               enabled: true,
               allowDrop: (dragNode, dropNode, position) => {
-                // 示例：不允许将父节点拖到子节点内部
-                console.log('拖拽检查：', { dragNode, dropNode, position });
+                // Example: disallow dropping parent into its child
+                console.log('Drag check:', { dragNode, dropNode, position });
                 return true;
               },
               onDragStart: (node) => {
-                console.log('开始拖拽：', node);
+                console.log('Drag start:', node);
               },
               onDragEnd: (node) => {
-                console.log('拖拽结束：', node);
+                console.log('Drag end:', node);
               },
             }}
             
-            // ========== 列宽调整 ==========
+            // ========== Resize ==========
             resizable
             onColumnResize={(key, width) => {
-              console.log('列宽变化：', { key, width });
+              console.log('Column resized:', { key, width });
             }}
             
-            // ========== 滚动配置 ==========
+            // ========== Scroll ==========
             scroll={{
               maxHeight: 500,
               minHeight: 300,
               minWidth: 1000,
-              virtual: false, // 可以改为 true 启用虚拟滚动
-              // rowHeight: 40, // 启用虚拟滚动时需要
+              virtual: false, // set to true to enable virtual scroll
+              // rowHeight: 40, // required when virtual is true
               // overscan: 5,
               onScrollBottom: () => {
-                console.log('滚动到底部');
+                console.log('Reached bottom');
               },
               scrollBottomThreshold: 50,
               onScrollRight: () => {
-                console.log('滚动到右侧');
+                console.log('Reached right edge');
               },
               scrollRightThreshold: 50,
             }}
             
-            // ========== 样式定制 ==========
+            // ========== Styling ==========
             className="full-feature-table"
             style={{ 
               fontSize: '14px',
             }}
             rowClassName={(node, index) => {
-              // 偶数行添加背景色
+              // Add background for even rows
               return index % 2 === 0 ? 'even-row' : 'odd-row';
             }}
             rowStyle={(node, index) => ({
-              // 根节点加粗
+              // Bold root nodes
               fontWeight: node.depth === 0 ? 'bold' : 'normal',
             })}
             headerClassName="custom-header"
             indentSize={indentSize}
             showTreeLine={showTreeLine}
             
-            // ========== 空状态 ==========
+            // ========== Empty state ==========
             emptyText={
               <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>📭</div>
-                <div>暂无数据，点击下方按钮添加数据</div>
+                <div>{tr('暂无数据，使用下方按钮添加行', 'No data yet, use the buttons below to add rows')}</div>
               </div>
             }
           />
         </div>
 
-        {/* 数据预览 */}
+        {/* Data preview */}
         <div style={{ 
           marginTop: '16px', 
           padding: '16px', 
@@ -981,7 +1024,9 @@ export const FullFeature: Story = {
           maxHeight: '200px',
           overflow: 'auto'
         }}>
-          <strong style={{ display: 'block', marginBottom: '8px' }}>📝 当前数据（JSON）：</strong>
+          <strong style={{ display: 'block', marginBottom: '8px' }}>
+            {tr('📝 当前数据（JSON）：', '📝 Current data (JSON):')}
+          </strong>
           <pre style={{ 
             margin: 0, 
             fontSize: '12px', 

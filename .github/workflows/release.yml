@@ -1,0 +1,66 @@
+name: Publish to npm
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_call:
+    inputs:
+      node_version:
+        description: "Node.js version used for build/publish"
+        required: false
+        type: string
+        default: "22"
+      pnpm_filter:
+        description: "pnpm --filter target (workspace package name)"
+        required: false
+        type: string
+        default: "@kfb/tree-table"
+      package_dir:
+        description: "Directory to run npm publish in"
+        required: false
+        type: string
+        default: "packages/tree-table"
+      npm_access:
+        description: "npm publish --access value"
+        required: false
+        type: string
+        default: "public"
+    secrets:
+      NPM_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          # rolldown/tsdown 依赖 util.styleText，需 Node >=20（推荐 22 LTS）
+          node-version: ${{ inputs.node_version || '22' }}
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build package
+        run: pnpm --filter "${{ inputs.pnpm_filter || '@kfb/tree-table' }}" build
+
+      - name: Publish to npm
+        run: cd "${{ inputs.package_dir || 'packages/tree-table' }}" && npm publish --access "${{ inputs.npm_access || 'public' }}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -102,6 +102,16 @@ export interface ActionButton<T extends TreeNode = TreeNode> {
   disabled?: (node: T) => boolean;
 }
 
+/** 内置文案配置（用于内置操作按钮/空态默认文案） */
+export interface LocaleText {
+  /** 拖拽手柄提示 */
+  dragHandleTitle?: string;
+  /** 添加子节点提示 */
+  addChildTitle?: string;
+  /** 删除节点提示 */
+  deleteNodeTitle?: string;
+}
+
 // ==================== 拖拽配置 ====================
 
 /** 放置位置 */
@@ -202,6 +212,8 @@ export interface TreeTableProps<T extends TreeNode = TreeNode> {
   addIcon?: React.ReactNode;
   /** 自定义删除图标 */
   deleteIcon?: React.ReactNode;
+  /** 内置文案配置 */
+  localeText?: LocaleText;
   
   // ========== 底部区域 ==========
   /** 自定义底部内容 */

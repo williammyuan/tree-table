@@ -4,6 +4,13 @@ on:
   push:
     tags: ["v*"] # 仅在推送符合模式的 tag 时发布
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      base_path:
+        description: "Storybook base path (e.g. /repo/)"
+        required: false
+        type: string
+        default: "/${{ github.event.repository.name }}/"
 
 permissions:
   contents: write
@@ -35,7 +42,7 @@ jobs:
 
       - name: Build Storybook
         env:
-          STORYBOOK_BASE_PATH: "/${{ github.event.repository.name }}/"
+          STORYBOOK_BASE_PATH: ${{ inputs.base_path || format('/{0}/', github.event.repository.name) }}
         run: pnpm build-storybook -- --output-dir storybook-static
 
       - name: Deploy to gh-pages

@@ -1,43 +1,45 @@
-# TreeTable Monorepo
+# TreeTable
 
-React 树形表格组件库，支持拖拽排序、层级调整、列宽调整等高级能力。
+React tree table component library with drag-and-drop sorting, hierarchy editing, resizable columns, and virtualized performance.
 
-## ✨ 特性速览
-- 树形数据展示，支持无限层级
-- 拖拽排序 & 层级调整
-- 列宽调整与左右固定列
-- 固定表头滚动、虚拟滚动性能优化
-- 完整类型定义，UI 框架无关
+Looking for Chinese docs? See [`README.zh.md`](./README.zh.md).
 
-## 🧰 环境要求
+## ✨ Highlights
+- Tree-structured data with unlimited depth
+- Drag-and-drop sorting and level adjustment
+- Resizable columns with left/right sticky columns
+- Fixed header scrolling and virtualized body for performance
+- Complete TypeScript definitions, UI-library agnostic
+
+## 🧰 Requirements
 - Node.js >= 18
 - pnpm >= 8
 
-## 📦 包结构
+## 📦 Packages
 ```
 packages/
-├── tree-table/    # 核心组件库 (@kfb/tree-table)
-└── playground/    # 开发演示应用
+├── tree-table/    # Core library (@kfb/tree-table)
+└── playground/    # Demo app for local development
 ```
 
-## 🚀 快速开始
+## 🚀 Quick Start
 ```bash
-pnpm install          # 安装依赖
-pnpm dev              # 启动 playground 开发服务器
-pnpm storybook        # 启动 Storybook 文档
+pnpm install          # install deps
+pnpm dev              # start playground dev server
+pnpm storybook        # start Storybook docs
 ```
 
-### 构建与测试
+### Build & Test
 ```bash
-pnpm build            # 构建组件库
-pnpm build-storybook  # 构建 Storybook 静态站点
-pnpm test             # 运行测试
-pnpm test:coverage    # 生成测试覆盖率
-pnpm lint             # 代码检查
+pnpm build            # build library
+pnpm build-storybook  # build Storybook static site
+pnpm test             # run tests
+pnpm test:coverage    # coverage report
+pnpm lint             # lint code
 ```
 
-## 🖥️ 使用示例
-更多详情见组件包文档：`packages/tree-table/README.md`
+## 🖥️ Usage Example
+See more in `packages/tree-table/README.md`.
 
 ```tsx
 import { TreeTable, TreeNode, ColumnDef } from '@kfb/tree-table';
@@ -51,31 +53,31 @@ interface MyNode extends TreeNode {
 const data: MyNode[] = [{ id: '1', name: 'field1', type: 'string', required: true }];
 
 const columns: ColumnDef<MyNode>[] = [
-  { key: 'name', title: '名称', flex: 1 },
-  { key: 'type', title: '类型', width: 120 },
+  { key: 'name', title: 'Name', flex: 1 },
+  { key: 'type', title: 'Type', width: 120 },
 ];
 
 <TreeTable data={data} columns={columns} onChange={() => {}} draggable resizable />;
 ```
 
-## 🛠️ 开发指南
+## 🛠️ Project Layout
 ```
 tree-table/
-├── .changeset/           # 版本管理配置
-├── .storybook/           # Storybook 配置
+├── .changeset/           # versioning config
+├── .storybook/           # Storybook config
 ├── packages/
-│   ├── tree-table/       # 核心组件库（源码、测试、文档）
-│   └── playground/       # 演示应用
-├── package.json          # 根配置
-├── pnpm-workspace.yaml   # Workspace 配置
-├── vitest.config.ts      # 测试配置
-└── tsconfig.json         # TypeScript 配置
+│   ├── tree-table/       # core library (source, tests, docs)
+│   └── playground/       # demo app
+├── package.json          # root config
+├── pnpm-workspace.yaml   # workspace config
+├── vitest.config.ts      # test config
+└── tsconfig.json         # TypeScript config
 ```
 
-### 发布流程（Changesets）
-1) 记录变更：`pnpm changeset`
-2) bump 版本：`pnpm version`
-3) 发布 npm：`pnpm release`
+### Release Flow (Changesets)
+1) Record changes: `pnpm changeset`
+2) Bump versions: `pnpm version`
+3) Publish to npm: `pnpm release`
 
 ## 📄 License
-MIT（见仓库根目录 `LICENSE`）
+MIT (see root `LICENSE`)

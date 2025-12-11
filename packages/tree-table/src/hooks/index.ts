@@ -16,3 +16,4 @@ export type { UseColumnResizeOptions, UseColumnResizeReturn } from './useColumnR
 export { useScrollSync } from './useScrollSync';
 export type { UseScrollSyncOptions, UseScrollSyncReturn } from './useScrollSync';
 
+

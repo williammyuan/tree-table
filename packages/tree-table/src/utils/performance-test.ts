@@ -234,3 +234,4 @@ if (typeof window === 'undefined' && require.main === module) {
   runBenchmarkSuite().catch(console.error);
 }
 
+
