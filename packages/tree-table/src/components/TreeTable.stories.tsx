@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useRef, useState } from 'react';
 import { TreeTable, TreeTableRef, TreeNode, ColumnDef, ThemeConfig } from '../index';
+// @ts-ignore
+import packageJson from '../../package.json';
 
 /** API parameter node type used in examples */
 interface ApiParamNode extends TreeNode {
@@ -197,7 +199,13 @@ const meta: Meta<typeof TreeTable> = {
 
 \`\`\`bash
 pnpm add @kfb/tree-table
+# or
+npm install @kfb/tree-table
+# or
+yarn add @kfb/tree-table
 \`\`\`
+
+**Current Version: ${packageJson.version}**
 
 ## Usage
 
