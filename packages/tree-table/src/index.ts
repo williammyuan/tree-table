@@ -11,6 +11,8 @@ export type {
   DropInfo,
   DragConfig,
   ScrollConfig,
+  ThemeConfig,
+  ThemeType,
   TreeTableProps,
   TreeTableRef,
 } from './types';

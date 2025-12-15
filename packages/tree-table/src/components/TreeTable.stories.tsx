@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useRef, useState } from 'react';
-import { TreeTable, TreeTableRef, TreeNode, ColumnDef } from '../index';
+import { TreeTable, TreeTableRef, TreeNode, ColumnDef, ThemeConfig } from '../index';
 
 /** API parameter node type used in examples */
 interface ApiParamNode extends TreeNode {
@@ -620,6 +620,185 @@ export const StickyColumns: Story = {
             scroll={{ maxHeight: 400, minWidth: 900 }}
           />
         </div>
+      </div>
+    );
+  },
+};
+
+/** Theme switching - light/dark/auto modes */
+export const ThemeSwitching: Story = {
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const tr = <T extends string>(zh: T, en: T): T => (isZh ? zh : en);
+    
+    const [data, setData] = useState<ApiParamNode[]>(() => createInitialData(isZh));
+    const [themeMode, setThemeMode] = useState<'light' | 'dark' | 'auto'>('light');
+    const columns = createColumns(isZh);
+    const localeText = getLocaleText(isZh);
+
+    useEffect(() => {
+      setData(createInitialData(isZh));
+    }, [isZh]);
+
+    const theme: ThemeConfig = {
+      mode: themeMode,
+    };
+
+    return (
+      <div>
+        {/* Theme switcher */}
+        <div style={{ 
+          marginBottom: '16px', 
+          padding: '16px', 
+          background: themeMode === 'dark' ? '#2a2a2a' : '#f0f0f0',
+          color: themeMode === 'dark' ? '#e8e8e8' : '#333',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          flexWrap: 'wrap'
+        }}>
+          <strong>{tr('选择主题：', 'Select Theme:')}</strong>
+          <button
+            onClick={() => setThemeMode('light')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '4px',
+              border: themeMode === 'light' ? '2px solid #1890ff' : '1px solid #ccc',
+              background: themeMode === 'light' ? '#e6f7ff' : '#fff',
+              cursor: 'pointer',
+              fontWeight: themeMode === 'light' ? 'bold' : 'normal',
+            }}
+          >
+            ☀️ {tr('明亮模式', 'Light')}
+          </button>
+          <button
+            onClick={() => setThemeMode('dark')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '4px',
+              border: themeMode === 'dark' ? '2px solid #1890ff' : '1px solid #ccc',
+              background: themeMode === 'dark' ? '#003a5f' : '#fff',
+              color: themeMode === 'dark' ? '#fff' : '#333',
+              cursor: 'pointer',
+              fontWeight: themeMode === 'dark' ? 'bold' : 'normal',
+            }}
+          >
+            🌙 {tr('深色模式', 'Dark')}
+          </button>
+          <button
+            onClick={() => setThemeMode('auto')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '4px',
+              border: themeMode === 'auto' ? '2px solid #1890ff' : '1px solid #ccc',
+              background: themeMode === 'auto' ? '#e6f7ff' : '#fff',
+              cursor: 'pointer',
+              fontWeight: themeMode === 'auto' ? 'bold' : 'normal',
+            }}
+          >
+            🔄 {tr('跟随系统', 'Auto')}
+          </button>
+        </div>
+
+        {/* Info panel */}
+        <div style={{ 
+          marginBottom: '16px', 
+          padding: '12px', 
+          background: themeMode === 'dark' ? '#2a2a2a' : '#e6f7ff',
+          color: themeMode === 'dark' ? '#e8e8e8' : '#333',
+          borderRadius: '8px',
+          border: themeMode === 'dark' ? '1px solid #3a3a3a' : '1px solid #91d5ff'
+        }}>
+          <strong>{tr('💡 提示：', '💡 Tips:')}</strong>
+          <ul style={{ margin: '8px 0 0', paddingLeft: '20px' }}>
+            <li>{tr('明亮模式：适合白天或光线充足的环境', 'Light mode: Best for daytime or bright environments')}</li>
+            <li>{tr('深色模式：适合夜间或暗光环境，减少眼睛疲劳', 'Dark mode: Best for nighttime or dim lighting, reduces eye strain')}</li>
+            <li>{tr('跟随系统：自动根据操作系统主题设置切换', 'Auto mode: Automatically switches based on your system theme')}</li>
+          </ul>
+        </div>
+
+        <TreeTable<ApiParamNode>
+          data={data}
+          columns={columns}
+          localeText={localeText}
+          onChange={setData}
+          onAdd={() => createNewNode(isZh)}
+          showActions
+          defaultExpandedKeys={['3', '3-1']}
+          theme={theme}
+        />
+      </div>
+    );
+  },
+};
+
+/** Custom theme colors - brand colors example */
+export const CustomTheme: Story = {
+  render: (_args, { globals }) => {
+    const isZh = globals.locale === 'zh';
+    const tr = <T extends string>(zh: T, en: T): T => (isZh ? zh : en);
+    
+    const [data, setData] = useState<ApiParamNode[]>(() => createInitialData(isZh));
+    const columns = createColumns(isZh);
+    const localeText = getLocaleText(isZh);
+
+    useEffect(() => {
+      setData(createInitialData(isZh));
+    }, [isZh]);
+
+    // Custom brand theme
+    const brandTheme: ThemeConfig = {
+      mode: 'dark',
+      cssVariables: {
+        // Brand colors
+        '--tree-table-primary-color': '#7c3aed',
+        '--tree-table-primary-hover': '#8b5cf6',
+        '--tree-table-primary-shadow': 'rgba(124, 58, 237, 0.2)',
+        '--tree-table-accent-color': '#f59e0b',
+        '--tree-table-accent-hover': '#fbbf24',
+        
+        // Deeper background
+        '--tree-table-bg-container': '#0f0f0f',
+        '--tree-table-bg-header': '#1a1a1a',
+        '--tree-table-bg-body': '#0f0f0f',
+        '--tree-table-bg-hover': '#252525',
+        
+        // High contrast text
+        '--tree-table-text-primary': '#ffffff',
+        '--tree-table-text-secondary': '#d1d5db',
+      }
+    };
+
+    return (
+      <div>
+        <div style={{ 
+          marginBottom: '16px', 
+          padding: '16px', 
+          background: '#1a1a1a',
+          color: '#e8e8e8',
+          borderRadius: '8px',
+          border: '1px solid #7c3aed'
+        }}>
+          <strong>{tr('🎨 自定义品牌主题示例', '🎨 Custom Brand Theme Example')}</strong>
+          <p style={{ margin: '8px 0 0', lineHeight: '1.6' }}>
+            {tr(
+              '本示例展示了如何使用自定义 CSS 变量来定制表格主题，使用紫色作为主色调，橙色作为强调色。',
+              'This example shows how to customize the table theme using CSS variables, with purple as the primary color and orange as the accent color.'
+            )}
+          </p>
+        </div>
+
+        <TreeTable<ApiParamNode>
+          data={data}
+          columns={columns}
+          localeText={localeText}
+          onChange={setData}
+          onAdd={() => createNewNode(isZh)}
+          showActions
+          defaultExpandedKeys={['3', '3-1']}
+          theme={brandTheme}
+        />
       </div>
     );
   },

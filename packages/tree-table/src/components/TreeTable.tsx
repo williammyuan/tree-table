@@ -17,9 +17,11 @@ import type {
   DropPosition,
   ColumnDef,
   LocaleText,
+  ThemeConfig,
 } from '../types';
 import { useDragDrop, useVirtualScroll, useColumnResize, useScrollSync } from '../hooks';
 import '../styles/TreeTable.css';
+import '../styles/TreeTable.theme.css';
 
 // ==================== 工具函数 ====================
 
@@ -648,12 +650,32 @@ function TreeTableInner<T extends TreeNode>(
     indentSize = 20,
     emptyText = 'No data',
     showTreeLine = true,
+    theme,
   } = props;
 
   const resolvedLocale: LocaleText = localeText ?? {};
   const dragHandleTitle = resolvedLocale.dragHandleTitle ?? 'Drag to sort';
   const addChildTitle = resolvedLocale.addChildTitle ?? 'Add child';
   const deleteNodeTitle = resolvedLocale.deleteNodeTitle ?? 'Delete node';
+
+  // ========== 主题处理 ==========
+  const themeMode = theme?.mode ?? 'light';
+  const themeClassName = `tree-table-theme-${themeMode}`;
+  
+  // 自定义 CSS 变量
+  const themeStyle = useMemo(() => {
+    if (!theme?.cssVariables) return style;
+    
+    const cssVars = Object.entries(theme.cssVariables).reduce(
+      (acc, [key, value]) => {
+        acc[key.startsWith('--') ? key : `--${key}`] = value;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+    
+    return { ...style, ...cssVars };
+  }, [theme?.cssVariables, style]);
 
   // ========== 状态 ==========
   const [state, dispatch] = useReducer(
@@ -1269,7 +1291,7 @@ function TreeTableInner<T extends TreeNode>(
   } : {};
 
   return (
-    <div className={`tree-table-container ${className}`} style={style}>
+    <div className={`tree-table-container ${themeClassName} ${className}`} style={themeStyle}>
       <div className={`tree-table${isScrollable ? ' tree-table-scrollable' : ''}`}>
         {isScrollable ? (
           // 滚动模式：表头固定，表体可滚动

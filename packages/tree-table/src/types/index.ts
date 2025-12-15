@@ -169,6 +169,19 @@ export interface ScrollConfig {
   scrollRightThreshold?: number;
 }
 
+// ==================== 主题配置 ====================
+
+/** 主题类型 */
+export type ThemeType = 'light' | 'dark' | 'auto';
+
+/** 主题配置 */
+export interface ThemeConfig {
+  /** 主题模式：light-明亮模式，dark-深色模式，auto-跟随系统 */
+  mode?: ThemeType;
+  /** 自定义主题变量（CSS 变量） */
+  cssVariables?: Record<string, string>;
+}
+
 // ==================== 主组件 Props ====================
 
 /** TreeTable 组件 Props */
@@ -268,6 +281,10 @@ export interface TreeTableProps<T extends TreeNode = TreeNode> {
   // ========== 空状态 ==========
   /** 空状态文案 */
   emptyText?: React.ReactNode;
+  
+  // ========== 主题配置 ==========
+  /** 主题配置 */
+  theme?: ThemeConfig;
 }
 
 // ==================== 组件实例方法 ====================

@@ -3,12 +3,13 @@
 Goal: enough detail for an AI to generate correct usage.
 
 Core facts
-- Package: `@kfb/tree-table`; CSS: `@kfb/tree-table/styles`.
-- Exports: `TreeTable`, types `TreeNode`, `ColumnDef<T>`, `TreeTableRef<T>`.
+- Package: `@kfb/tree-table`; CSS: `@kfb/tree-table/styles` + `@kfb/tree-table/styles/TreeTable.theme.css` (for theme support).
+- Exports: `TreeTable`, types `TreeNode`, `ColumnDef<T>`, `TreeTableRef<T>`, `ThemeConfig`, `ThemeType`.
 - Controlled data: you must keep `data` in state and update via `onChange`.
 - Column features: `sticky`, `width/minWidth/maxWidth`, `flex`, `align`, `render`, per-column `resizable`.
 - Actions/i18n: `localeText` { `dragHandleTitle`, `addChildTitle`, `deleteNodeTitle` }, `emptyText`.
 - Scroll: `scroll={{ maxHeight/minHeight, minWidth, virtual, rowHeight, overscan }}`; sticky columns need `scroll.minWidth`.
+- Theme: `theme={{ mode: 'light'|'dark'|'auto', cssVariables: {...} }}`; supports 40+ CSS variables for full customization.
 - Ref: `getData`, `setData`, `addRootNode`, `addChildNode`, `addSiblingNode`, `deleteNode`, `updateNode`, `expandAll`, `collapseAll`.
 
 Type hints
@@ -19,6 +20,11 @@ interface ColumnDef<T> {
   flex?: number; align?: 'left'|'center'|'right'; sticky?: 'left'|'right';
   render?: (value: unknown, node: T, onChange: (v: unknown) => void) => React.ReactNode;
   resizable?: boolean;
+}
+type ThemeType = 'light' | 'dark' | 'auto';
+interface ThemeConfig {
+  mode?: ThemeType;
+  cssVariables?: Record<string, string>; // e.g. { '--tree-table-primary-color': '#7c3aed' }
 }
 ```
 
@@ -44,6 +50,7 @@ export default function Demo() {
       onChange={setData}     // controlled data
       draggable
       resizable
+      theme={{ mode: 'light' }}  // optional: 'light' | 'dark' | 'auto'
       localeText={{
         dragHandleTitle: '拖拽排序',
         addChildTitle: '添加子节点',
@@ -85,11 +92,57 @@ ref.current?.expandAll();
 ref.current?.deleteNode('n1');
 ```
 
+Theme examples
+```tsx
+// Dark mode
+<TreeTable data={data} columns={columns} theme={{ mode: 'dark' }} />
+
+// Auto (follow system)
+<TreeTable data={data} columns={columns} theme={{ mode: 'auto' }} />
+
+// Custom brand colors
+<TreeTable
+  data={data}
+  columns={columns}
+  theme={{
+    mode: 'dark',
+    cssVariables: {
+      '--tree-table-primary-color': '#7c3aed',
+      '--tree-table-accent-color': '#f59e0b',
+      '--tree-table-bg-container': '#0f0f0f',
+      '--tree-table-bg-header': '#1a1a1a',
+    }
+  }}
+/>
+
+// Theme switching
+const [theme, setTheme] = useState<'light'|'dark'>('light');
+<button onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}>Toggle</button>
+<TreeTable data={data} columns={columns} theme={{ mode: theme }} />
+```
+
 Prompts to generate code
 - “TreeTable with draggable + resizable columns; fields id/name/type/required/description; onChange updates state.”
 - “Add sticky name (left) and description (right), scroll.minWidth=900, defaultExpandedKeys ['root'].”
 - “Enable virtual scroll (maxHeight 500, rowHeight 40, overscan 5); include localeText Chinese tooltips and emptyText.”
 
 More examples
-- Storybook source: `packages/tree-table/src/components/TreeTable.stories.tsx` (rich scenarios: draggable, sticky, virtual scroll, control panel).
+- Storybook source: `packages/tree-table/src/components/TreeTable.stories.tsx` (rich scenarios: draggable, sticky, virtual scroll, control panel, theme switching).
+- Theme examples: `packages/tree-table/THEME_EXAMPLES.tsx` (8 practical theme usage patterns).
+- Theme guide: `packages/tree-table/THEME_GUIDE.zh.md` (complete documentation with 40+ CSS variables).
+
+Prompts for theme features
+- "Add dark mode theme with custom purple primary color (#7c3aed) and orange accent (#f59e0b)."
+- "Create theme toggle button switching between light/dark modes; persist theme in localStorage."
+- "Use auto theme mode to follow system preference; add theme switcher with light/dark/auto options."
+
+Available CSS theme variables (40+ total)
+- Backgrounds: `--tree-table-bg-container`, `--tree-table-bg-header`, `--tree-table-bg-body`, `--tree-table-bg-hover`, etc.
+- Text colors: `--tree-table-text-primary`, `--tree-table-text-secondary`, `--tree-table-text-tertiary`, etc.
+- Borders: `--tree-table-border-color`, `--tree-table-border-color-light`
+- Interactive: `--tree-table-primary-color`, `--tree-table-accent-color`, `--tree-table-danger-color`
+- Drag states: `--tree-table-drag-bg`, `--tree-table-drag-border`
+- Other: `--tree-table-line-color`, `--tree-table-shadow-sticky`
+
+
 

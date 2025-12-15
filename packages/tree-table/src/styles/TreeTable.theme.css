@@ -1,0 +1,373 @@
+/* ==================== 主题系统 ==================== */
+
+/* CSS 变量定义 - 明亮模式（默认） */
+:root,
+.tree-table-theme-light {
+  /* 背景色 */
+  --tree-table-bg-container: #fff;
+  --tree-table-bg-header: #fafafa;
+  --tree-table-bg-body: #fff;
+  --tree-table-bg-footer: #fafafa;
+  --tree-table-bg-hover: #fafafa;
+  --tree-table-bg-sticky: #fff;
+  --tree-table-bg-sticky-header: #fafafa;
+  --tree-table-bg-input: transparent;
+  --tree-table-bg-input-focus: #fff;
+  --tree-table-bg-select: #fff;
+  
+  /* 边框色 */
+  --tree-table-border-color: #e8e8e8;
+  --tree-table-border-color-light: #f0f0f0;
+  
+  /* 文字色 */
+  --tree-table-text-primary: #333;
+  --tree-table-text-secondary: #666;
+  --tree-table-text-tertiary: #999;
+  --tree-table-text-placeholder: #bbb;
+  --tree-table-text-disabled: #ccc;
+  
+  /* 交互色 */
+  --tree-table-primary-color: #1890ff;
+  --tree-table-primary-hover: #40a9ff;
+  --tree-table-primary-shadow: rgba(24, 144, 255, 0.1);
+  --tree-table-accent-color: #d4a574;
+  --tree-table-accent-hover: #b8956a;
+  --tree-table-danger-color: #ff4d4f;
+  --tree-table-danger-hover: #ff7875;
+  
+  /* 拖拽状态 */
+  --tree-table-drag-bg: #e6f7ff;
+  --tree-table-drag-border: #1890ff;
+  --tree-table-drag-opacity: 0.5;
+  
+  /* 树形线条 */
+  --tree-table-line-color: #d9d9d9;
+  
+  /* 阴影 */
+  --tree-table-shadow-sticky: rgba(0, 0, 0, 0.08);
+  
+  /* 调整器 */
+  --tree-table-resizer-bg: transparent;
+  --tree-table-resizer-bg-hover: #1890ff;
+  --tree-table-resizer-bg-active: #1890ff;
+  
+  /* 按钮 */
+  --tree-table-btn-bg: transparent;
+  --tree-table-btn-bg-hover: #f0f0f0;
+  --tree-table-btn-color: #999;
+  --tree-table-btn-color-hover: #666;
+}
+
+/* 深色模式 */
+.tree-table-theme-dark {
+  /* 背景色 */
+  --tree-table-bg-container: #1f1f1f;
+  --tree-table-bg-header: #2a2a2a;
+  --tree-table-bg-body: #1f1f1f;
+  --tree-table-bg-footer: #2a2a2a;
+  --tree-table-bg-hover: #2a2a2a;
+  --tree-table-bg-sticky: #1f1f1f;
+  --tree-table-bg-sticky-header: #2a2a2a;
+  --tree-table-bg-input: transparent;
+  --tree-table-bg-input-focus: #2a2a2a;
+  --tree-table-bg-select: #2a2a2a;
+  
+  /* 边框色 */
+  --tree-table-border-color: #3a3a3a;
+  --tree-table-border-color-light: #333;
+  
+  /* 文字色 */
+  --tree-table-text-primary: #e8e8e8;
+  --tree-table-text-secondary: #b8b8b8;
+  --tree-table-text-tertiary: #888;
+  --tree-table-text-placeholder: #666;
+  --tree-table-text-disabled: #555;
+  
+  /* 交互色 */
+  --tree-table-primary-color: #1890ff;
+  --tree-table-primary-hover: #40a9ff;
+  --tree-table-primary-shadow: rgba(24, 144, 255, 0.2);
+  --tree-table-accent-color: #d4a574;
+  --tree-table-accent-hover: #e0b885;
+  --tree-table-danger-color: #ff4d4f;
+  --tree-table-danger-hover: #ff7875;
+  
+  /* 拖拽状态 */
+  --tree-table-drag-bg: #003a5f;
+  --tree-table-drag-border: #1890ff;
+  --tree-table-drag-opacity: 0.5;
+  
+  /* 树形线条 */
+  --tree-table-line-color: #4a4a4a;
+  
+  /* 阴影 */
+  --tree-table-shadow-sticky: rgba(0, 0, 0, 0.3);
+  
+  /* 调整器 */
+  --tree-table-resizer-bg: transparent;
+  --tree-table-resizer-bg-hover: #1890ff;
+  --tree-table-resizer-bg-active: #1890ff;
+  
+  /* 按钮 */
+  --tree-table-btn-bg: transparent;
+  --tree-table-btn-bg-hover: #333;
+  --tree-table-btn-color: #888;
+  --tree-table-btn-color-hover: #b8b8b8;
+}
+
+/* 跟随系统主题（使用 prefers-color-scheme 媒体查询） */
+@media (prefers-color-scheme: dark) {
+  .tree-table-theme-auto {
+    /* 背景色 */
+    --tree-table-bg-container: #1f1f1f;
+    --tree-table-bg-header: #2a2a2a;
+    --tree-table-bg-body: #1f1f1f;
+    --tree-table-bg-footer: #2a2a2a;
+    --tree-table-bg-hover: #2a2a2a;
+    --tree-table-bg-sticky: #1f1f1f;
+    --tree-table-bg-sticky-header: #2a2a2a;
+    --tree-table-bg-input: transparent;
+    --tree-table-bg-input-focus: #2a2a2a;
+    --tree-table-bg-select: #2a2a2a;
+    
+    /* 边框色 */
+    --tree-table-border-color: #3a3a3a;
+    --tree-table-border-color-light: #333;
+    
+    /* 文字色 */
+    --tree-table-text-primary: #e8e8e8;
+    --tree-table-text-secondary: #b8b8b8;
+    --tree-table-text-tertiary: #888;
+    --tree-table-text-placeholder: #666;
+    --tree-table-text-disabled: #555;
+    
+    /* 交互色 */
+    --tree-table-primary-color: #1890ff;
+    --tree-table-primary-hover: #40a9ff;
+    --tree-table-primary-shadow: rgba(24, 144, 255, 0.2);
+    --tree-table-accent-color: #d4a574;
+    --tree-table-accent-hover: #e0b885;
+    --tree-table-danger-color: #ff4d4f;
+    --tree-table-danger-hover: #ff7875;
+    
+    /* 拖拽状态 */
+    --tree-table-drag-bg: #003a5f;
+    --tree-table-drag-border: #1890ff;
+    --tree-table-drag-opacity: 0.5;
+    
+    /* 树形线条 */
+    --tree-table-line-color: #4a4a4a;
+    
+    /* 阴影 */
+    --tree-table-shadow-sticky: rgba(0, 0, 0, 0.3);
+    
+    /* 调整器 */
+    --tree-table-resizer-bg: transparent;
+    --tree-table-resizer-bg-hover: #1890ff;
+    --tree-table-resizer-bg-active: #1890ff;
+    
+    /* 按钮 */
+    --tree-table-btn-bg: transparent;
+    --tree-table-btn-bg-hover: #333;
+    --tree-table-btn-color: #888;
+    --tree-table-btn-color-hover: #b8b8b8;
+  }
+}
+
+/* ==================== 应用主题变量到组件 ==================== */
+
+/* 容器 */
+.tree-table-container {
+  background: var(--tree-table-bg-container);
+}
+
+/* 表格主体 */
+.tree-table {
+  border-color: var(--tree-table-border-color);
+}
+
+/* 表头 */
+.tree-table-head {
+  background: var(--tree-table-bg-header);
+  border-bottom-color: var(--tree-table-border-color);
+  color: var(--tree-table-text-secondary);
+}
+
+/* 表体 */
+.tree-table-body {
+  background: var(--tree-table-bg-body);
+}
+
+/* 表格行 */
+.tree-table-row {
+  border-bottom-color: var(--tree-table-border-color-light);
+}
+
+.tree-table-row:hover {
+  background: var(--tree-table-bg-hover);
+}
+
+/* 单元格 */
+.cell {
+  border-right-color: var(--tree-table-border-color-light);
+}
+
+.cell-text {
+  color: var(--tree-table-text-primary);
+}
+
+/* 固定列背景 */
+.tree-table-head .cell-sticky-left,
+.tree-table-head .cell-sticky-right {
+  background: var(--tree-table-bg-sticky-header);
+}
+
+.tree-table-row .cell-sticky-left,
+.tree-table-row .cell-sticky-right {
+  background: var(--tree-table-bg-sticky);
+}
+
+.tree-table-row:hover .cell-sticky-left,
+.tree-table-row:hover .cell-sticky-right {
+  background: var(--tree-table-bg-hover);
+}
+
+/* 固定列阴影 */
+.cell-sticky-left::after {
+  box-shadow: inset 10px 0 8px -8px var(--tree-table-shadow-sticky);
+}
+
+.cell-sticky-right::before {
+  box-shadow: inset -10px 0 8px -8px var(--tree-table-shadow-sticky);
+}
+
+/* 树形线条 */
+.tree-line-vertical,
+.tree-line-corner,
+.tree-line-corner::after {
+  background-color: var(--tree-table-line-color);
+}
+
+/* 空状态 */
+.tree-table-empty {
+  color: var(--tree-table-text-tertiary);
+}
+
+/* 拖拽状态 */
+.tree-table-row.dragging {
+  opacity: var(--tree-table-drag-opacity);
+  background: var(--tree-table-drag-bg);
+}
+
+.tree-table-row.drop-target.drop-before::before,
+.tree-table-row.drop-target.drop-after::after {
+  background: var(--tree-table-drag-border);
+}
+
+.tree-table-row.drop-target.drop-inside {
+  background: var(--tree-table-drag-bg);
+  box-shadow: inset 0 0 0 2px var(--tree-table-drag-border);
+}
+
+/* 拖拽手柄 */
+.drag-handle {
+  color: var(--tree-table-text-placeholder);
+}
+
+.drag-handle:hover {
+  color: var(--tree-table-text-secondary);
+}
+
+/* 操作按钮 */
+.action-btn {
+  background: var(--tree-table-btn-bg);
+  color: var(--tree-table-btn-color);
+}
+
+.action-btn:hover {
+  background: var(--tree-table-btn-bg-hover);
+  color: var(--tree-table-btn-color-hover);
+}
+
+.action-btn.add:hover {
+  color: var(--tree-table-primary-color);
+}
+
+.action-btn.delete:hover {
+  color: var(--tree-table-danger-color);
+}
+
+/* 展开/收起按钮 */
+.expand-btn {
+  color: var(--tree-table-text-tertiary);
+}
+
+.expand-btn:hover {
+  color: var(--tree-table-accent-color);
+}
+
+/* 输入框 */
+.tree-table-input {
+  background: var(--tree-table-bg-input);
+  color: var(--tree-table-text-primary);
+  border-color: transparent;
+}
+
+.tree-table-input:hover {
+  border-color: var(--tree-table-line-color);
+}
+
+.tree-table-input:focus {
+  border-color: var(--tree-table-primary-color);
+  background: var(--tree-table-bg-input-focus);
+  box-shadow: 0 0 0 2px var(--tree-table-primary-shadow);
+}
+
+.tree-table-input::placeholder {
+  color: var(--tree-table-text-placeholder);
+}
+
+/* 下拉框 */
+.tree-table-select {
+  border-color: var(--tree-table-line-color);
+  background: var(--tree-table-bg-select);
+  color: var(--tree-table-text-primary);
+}
+
+.tree-table-select:hover {
+  border-color: var(--tree-table-primary-hover);
+}
+
+.tree-table-select:focus {
+  border-color: var(--tree-table-primary-color);
+  box-shadow: 0 0 0 2px var(--tree-table-primary-shadow);
+}
+
+/* 复选框 */
+.tree-table-checkbox {
+  accent-color: var(--tree-table-accent-color);
+}
+
+/* 底部操作栏 */
+.tree-table-footer {
+  border-top-color: var(--tree-table-border-color-light);
+  background: var(--tree-table-bg-footer);
+}
+
+.footer-btn {
+  color: var(--tree-table-accent-color);
+}
+
+.footer-btn:hover {
+  color: var(--tree-table-accent-hover);
+}
+
+/* 列宽调整 */
+.column-resizer {
+  background: var(--tree-table-resizer-bg);
+}
+
+.column-resizer:hover,
+.column-resizer:active {
+  background: var(--tree-table-resizer-bg-hover);
+}
