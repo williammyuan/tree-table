@@ -1,6 +1,6 @@
 {
   "name": "@kfb/tree-table",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "React树形表格组件 - 支持拖拽排序、层级调整、列宽调整、虚拟滚动",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -15,6 +15,10 @@
     "./styles": {
       "import": "./dist/styles/TreeTable.css",
       "require": "./dist/styles/TreeTable.css"
+    },
+    "./styles/TreeTable.theme.css": {
+      "import": "./dist/styles/TreeTable.theme.css",
+      "require": "./dist/styles/TreeTable.theme.css"
     }
   },
   "files": [
